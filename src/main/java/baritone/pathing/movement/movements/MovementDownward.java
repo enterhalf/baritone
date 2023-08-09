@@ -25,11 +25,10 @@ import baritone.pathing.movement.Movement;
 import baritone.pathing.movement.MovementHelper;
 import baritone.pathing.movement.MovementState;
 import com.google.common.collect.ImmutableSet;
+import java.util.Set;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.Set;
 
 public class MovementDownward extends Movement {
 
@@ -59,7 +58,7 @@ public class MovementDownward extends Movement {
         if (!context.allowDownward) {
             return COST_INF;
         }
-        if (!MovementHelper.canWalkOn(context.bsi, x, y - 2, z)) {
+        if (!MovementHelper.canWalkOn(context, x, y - 2, z)) {
             return COST_INF;
         }
         BlockState down = context.get(x, y - 1, z);

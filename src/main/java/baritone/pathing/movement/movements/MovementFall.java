@@ -31,6 +31,9 @@ import baritone.pathing.movement.MovementHelper;
 import baritone.pathing.movement.MovementState;
 import baritone.pathing.movement.MovementState.MovementTarget;
 import baritone.utils.pathing.MutableMoveResult;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -44,10 +47,6 @@ import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.WaterFluid;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 
 public class MovementFall extends Movement {
 
@@ -78,16 +77,10 @@ public class MovementFall extends Movement {
         return set;
     }
 
-    private static BetterBlockPos[] buildPositionsToBreak(BetterBlockPos src, BetterBlockPos dest) {
-        BetterBlockPos[] toBreak;
-        int diffX = src.getX() - dest.getX();
-        int diffZ = src.getZ() - dest.getZ();
-        int diffY = Math.abs(src.getY() - dest.getY());
-        toBreak = new BetterBlockPos[diffY + 2];
-        for (int i = 0; i < toBreak.length; i++) {
-            toBreak[i] = new BetterBlockPos(src.getX() - diffX, src.getY() + 1 - i, src.getZ() - diffZ);
-        }
-        return toBreak;
+    private boolean willPlaceBucket() {
+        CalculationContext context = new CalculationContext(baritone);
+        MutableMoveResult result = new MutableMoveResult();
+        return MovementDescend.dynamicFallCost(context, src.x, src.y, src.z, dest.x, dest.z, 0, context.get(dest.x, src.y - 2, dest.z), result);
     }
 
     @Override
@@ -109,7 +102,7 @@ public class MovementFall extends Movement {
                 return state.setStatus(MovementStatus.UNREACHABLE);
             }
 
-            if (ctx.player().position().y - dest.getY() < ctx.playerController().getBlockReachDistance() && !ctx.player().isOnGround()) {
+            if (ctx.player().position().y - dest.getY() < ctx.playerController().getBlockReachDistance() && !ctx.player().onGround()) {
                 ctx.player().getInventory().selected = ctx.player().getInventory().findSlotMatchingItem(STACK_BUCKET_WATER);
 
                 targetRotation = new Rotation(toDest.getYaw(), 90.0F);
@@ -144,7 +137,7 @@ public class MovementFall extends Movement {
         }
         Vec3 destCenter = VecUtils.getBlockPosCenter(dest); // we are moving to the 0.5 center not the edge (like if we were falling on a ladder)
         if (Math.abs(ctx.player().position().x + ctx.player().getDeltaMovement().x - destCenter.x) > 0.1 || Math.abs(ctx.player().position().z + ctx.player().getDeltaMovement().z - destCenter.z) > 0.1) {
-            if (!ctx.player().isOnGround() && Math.abs(ctx.player().getDeltaMovement().y) > 0.4) {
+            if (!ctx.player().onGround() && Math.abs(ctx.player().getDeltaMovement().y) > 0.4) {
                 state.setInput(Input.SNEAK, true);
             }
             state.setInput(Input.MOVE_FORWARD, true);
@@ -156,7 +149,7 @@ public class MovementFall extends Movement {
             double dist = Math.abs(avoid.getX() * (destCenter.x - avoid.getX() / 2.0 - ctx.player().position().x)) + Math.abs(avoid.getZ() * (destCenter.z - avoid.getZ() / 2.0 - ctx.player().position().z));
             if (dist < 0.6) {
                 state.setInput(Input.MOVE_FORWARD, true);
-            } else if (!ctx.player().isOnGround()) {
+            } else if (!ctx.player().onGround()) {
                 state.setInput(Input.SNEAK, false);
             }
         }
@@ -177,17 +170,23 @@ public class MovementFall extends Movement {
         return null;
     }
 
-    private boolean willPlaceBucket() {
-        CalculationContext context = new CalculationContext(baritone);
-        MutableMoveResult result = new MutableMoveResult();
-        return MovementDescend.dynamicFallCost(context, src.x, src.y, src.z, dest.x, dest.z, 0, context.get(dest.x, src.y - 2, dest.z), result);
-    }
-
     @Override
     public boolean safeToCancel(MovementState state) {
         // if we haven't started walking off the edge yet, or if we're in the process of breaking blocks before doing the fall
         // then it's safe to cancel this
         return ctx.playerFeet().equals(src) || state.getStatus() != MovementStatus.RUNNING;
+    }
+
+    private static BetterBlockPos[] buildPositionsToBreak(BetterBlockPos src, BetterBlockPos dest) {
+        BetterBlockPos[] toBreak;
+        int diffX = src.getX() - dest.getX();
+        int diffZ = src.getZ() - dest.getZ();
+        int diffY = Math.abs(src.getY() - dest.getY());
+        toBreak = new BetterBlockPos[diffY + 2];
+        for (int i = 0; i < toBreak.length; i++) {
+            toBreak[i] = new BetterBlockPos(src.getX() - diffX, src.getY() + 1 - i, src.getZ() - diffZ);
+        }
+        return toBreak;
     }
 
     @Override

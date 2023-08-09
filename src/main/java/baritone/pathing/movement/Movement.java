@@ -25,12 +25,17 @@ import baritone.api.utils.*;
 import baritone.api.utils.input.Input;
 import baritone.behavior.PathingBehavior;
 import baritone.utils.BlockStateInterface;
+import java.util.*;
+
+import com.mojang.authlib.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-
-import java.util.*;
 
 public abstract class Movement implements IMovement, MovementHelper {
 

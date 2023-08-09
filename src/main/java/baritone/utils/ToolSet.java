@@ -93,36 +93,8 @@ public class ToolSet {
         }
     }
 
-    /**
-     * Calculates how long would it take to mine the specified block given the best tool
-     * in this toolset is used. A negative value is returned if the specified block is unbreakable.
-     *
-     * @param item  the item to mine it with
-     * @param state the blockstate to be mined
-     * @return how long it would take in ticks
-     */
-    public static double calculateSpeedVsBlock(ItemStack item, BlockState state) {
-        float hardness = state.getDestroySpeed(null, null);
-        if (hardness < 0) {
-            return -1;
-        }
-
-        float speed = item.getDestroySpeed(state);
-        if (speed > 1) {
-            int effLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_EFFICIENCY, item);
-            if (effLevel > 0 && !item.isEmpty()) {
-                speed += effLevel * effLevel + 1;
-            }
-        }
-        if (AltoClefSettings.getInstance().shouldForceUseTool(state, item)) {
-            return Double.POSITIVE_INFINITY;
-        }
-        speed /= hardness;
-        if (!state.requiresCorrectToolForDrops() || (!item.isEmpty() && item.isCorrectToolForDrops(state))) {
-            return speed / 30;
-        } else {
-            return speed / 100;
-        }
+    public boolean hasSilkTouch(ItemStack stack) {
+        return EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;
     }
 
     /**
@@ -193,12 +165,40 @@ public class ToolSet {
         return calculateSpeedVsBlock(stack, b.defaultBlockState()) * avoidanceMultiplier(b);
     }
 
-    public boolean hasSilkTouch(ItemStack stack) {
-        return EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;
-    }
-
     private double avoidanceMultiplier(Block b) {
         return Baritone.settings().blocksToAvoidBreaking.value.contains(b) ? Baritone.settings().avoidBreakingMultiplier.value : 1;
+    }
+
+    /**
+     * Calculates how long would it take to mine the specified block given the best tool
+     * in this toolset is used. A negative value is returned if the specified block is unbreakable.
+     *
+     * @param item  the item to mine it with
+     * @param state the blockstate to be mined
+     * @return how long it would take in ticks
+     */
+    public static double calculateSpeedVsBlock(ItemStack item, BlockState state) {
+        float hardness = state.getDestroySpeed(null, null);
+        if (hardness < 0) {
+            return -1;
+        }
+
+        float speed = item.getDestroySpeed(state);
+        if (speed > 1) {
+            int effLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_EFFICIENCY, item);
+            if (effLevel > 0 && !item.isEmpty()) {
+                speed += effLevel * effLevel + 1;
+            }
+        }
+        if (AltoClefSettings.getInstance().shouldForceUseTool(state, item)) {
+            return Double.POSITIVE_INFINITY;
+        }
+        speed /= hardness;
+        if (!state.requiresCorrectToolForDrops() || (!item.isEmpty() && item.isCorrectToolForDrops(state))) {
+            return speed / 30;
+        } else {
+            return speed / 100;
+        }
     }
 
     /**

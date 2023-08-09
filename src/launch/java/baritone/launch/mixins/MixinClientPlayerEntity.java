@@ -19,12 +19,14 @@ package baritone.launch.mixins;
 
 import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
+import baritone.api.event.events.ChatEvent;
 import baritone.api.event.events.PlayerUpdateEvent;
 import baritone.api.event.events.SprintStateEvent;
 import baritone.api.event.events.type.EventState;
 import baritone.behavior.LookBehavior;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Abilities;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

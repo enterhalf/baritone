@@ -21,12 +21,12 @@ import baritone.api.BaritoneAPI;
 import baritone.api.Settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -179,7 +179,7 @@ public class SettingsUtil {
     /**
      * This should always be the same as whether the setting can be parsed from or serialized to a string
      *
-     * @param the setting
+     * @param setting The Setting
      * @return true if the setting can not be set or read by the user
      */
     public static boolean javaOnlySetting(Settings.Setting setting) {
@@ -203,6 +203,28 @@ public class SettingsUtil {
             throw new IllegalStateException(ioMethod + " parser returned incorrect type, expected " + intendedType + " got " + parsed + " which is " + parsed.getClass());
         }
         setting.value = parsed;
+    }
+
+    private interface ISettingParser<T> {
+
+        T parse(ParserContext context, String raw);
+
+        String toString(ParserContext context, T value);
+
+        boolean accepts(Type type);
+    }
+
+    private static class ParserContext {
+
+        private final Settings.Setting<?> setting;
+
+        private ParserContext(Settings.Setting<?> setting) {
+            this.setting = setting;
+        }
+
+        private Settings.Setting<?> getSetting() {
+            return this.setting;
+        }
     }
 
     private enum Parser implements ISettingParser {
@@ -331,28 +353,6 @@ public class SettingsUtil {
             return Stream.of(values())
                     .filter(parser -> parser.accepts(type))
                     .findFirst().orElse(null);
-        }
-    }
-
-    private interface ISettingParser<T> {
-
-        T parse(ParserContext context, String raw);
-
-        String toString(ParserContext context, T value);
-
-        boolean accepts(Type type);
-    }
-
-    private static class ParserContext {
-
-        private final Settings.Setting<?> setting;
-
-        private ParserContext(Settings.Setting<?> setting) {
-            this.setting = setting;
-        }
-
-        private Settings.Setting<?> getSetting() {
-            return this.setting;
         }
     }
 }

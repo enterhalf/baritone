@@ -19,9 +19,8 @@ package baritone.api.command.exception;
 
 import baritone.api.command.ICommand;
 import baritone.api.command.argument.ICommandArgument;
-import net.minecraft.ChatFormatting;
-
 import java.util.List;
+import net.minecraft.ChatFormatting;
 
 import static baritone.api.utils.Helper.HELPER;
 

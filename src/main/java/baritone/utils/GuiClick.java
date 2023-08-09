@@ -25,12 +25,14 @@ import baritone.api.utils.Helper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
@@ -63,7 +65,7 @@ public class GuiClick extends Screen implements Helper {
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics stack, int mouseX, int mouseY, float partialTicks) {
         double mx = mc.mouseHandler.xpos();
         double my = mc.mouseHandler.ypos();
 
@@ -77,7 +79,7 @@ public class GuiClick extends Screen implements Helper {
             ///
             Vec3 viewerPos = new Vec3(PathRenderer.posX(), PathRenderer.posY(), PathRenderer.posZ());
             LocalPlayer player = BaritoneAPI.getProvider().getPrimaryBaritone().getPlayerContext().player();
-            HitResult result = player.level.clip(new ClipContext(near.add(viewerPos), far.add(viewerPos), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+            HitResult result = player.level().clip(new ClipContext(near.add(viewerPos), far.add(viewerPos), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
             if (result != null && result.getType() == HitResult.Type.BLOCK) {
                 currentMouseOver = ((BlockHitResult) result).getBlockPos();
                 System.out.println("currentMouseOver = " + currentMouseOver);
@@ -133,7 +135,7 @@ public class GuiClick extends Screen implements Helper {
                 //TODO: check
                 IRenderer.glColor(Color.RED, 0.4F);
                 RenderSystem.lineWidth(Baritone.settings().pathRenderLineWidthPixels.value);
-                RenderSystem.disableTexture();
+                RenderSystem.setShader(GameRenderer::getPositionColorShader);
                 RenderSystem.depthMask(false);
                 RenderSystem.disableDepthTest();
                 BetterBlockPos a = new BetterBlockPos(currentMouseOver);
@@ -142,7 +144,6 @@ public class GuiClick extends Screen implements Helper {
                 RenderSystem.enableDepthTest();
 
                 RenderSystem.depthMask(true);
-                RenderSystem.enableTexture();
                 RenderSystem.disableBlend();
             }
         }
@@ -165,7 +166,7 @@ public class GuiClick extends Screen implements Helper {
             return null;
         }
 
-        pos.mul(1 / pos.w());
+        pos.mul(1/pos.w());
         return new Vec3(pos.x(), pos.y(), pos.z());
     }
 }

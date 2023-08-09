@@ -26,8 +26,7 @@ import java.lang.reflect.Type;
  */
 public final class TypeUtils {
 
-    private TypeUtils() {
-    }
+    private TypeUtils() {}
 
     /**
      * Resolves the "base type" for the specified type. For example, if the specified

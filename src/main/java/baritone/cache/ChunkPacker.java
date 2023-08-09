@@ -21,7 +21,12 @@ import baritone.api.utils.BlockUtils;
 import baritone.pathing.movement.MovementHelper;
 import baritone.utils.pathing.PathingBlockType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoublePlantBlock;
+import net.minecraft.world.level.block.FlowerBlock;
+import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
@@ -29,7 +34,6 @@ import net.minecraft.world.level.chunk.PalettedContainer;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.phys.Vec3;
-
 import java.util.*;
 
 import static baritone.utils.BlockStateInterface.getFromChunk;
@@ -40,8 +44,7 @@ import static baritone.utils.BlockStateInterface.getFromChunk;
  */
 public final class ChunkPacker {
 
-    private ChunkPacker() {
-    }
+    private ChunkPacker() {}
 
     public static CachedChunk pack(LevelChunk chunk) {
         //long start = System.nanoTime() / 1000000L;
@@ -80,7 +83,7 @@ public final class ChunkPacker {
                             Block block = state.getBlock();
                             if (CachedChunk.BLOCKS_TO_KEEP_TRACK_OF.contains(block)) {
                                 String name = BlockUtils.blockToString(block);
-                                specialBlocks.computeIfAbsent(name, b -> new ArrayList<>()).add(new BlockPos(x, y + chunk.getMinBuildHeight(), z));
+                                specialBlocks.computeIfAbsent(name, b -> new ArrayList<>()).add(new BlockPos(x, y+chunk.getMinBuildHeight(), z));
                             }
                         }
                     }
@@ -96,8 +99,7 @@ public final class ChunkPacker {
         // get top block in columns
         // @formatter:off
         for (int z = 0; z < 16; z++) {
-            https:
-//www.ibm.com/developerworks/library/j-perry-writing-good-java-code/index.html
+            https://www.ibm.com/developerworks/library/j-perry-writing-good-java-code/index.html
             for (int x = 0; x < 16; x++) {
                 for (int y = height - 1; y >= 0; y--) {
                     int index = CachedChunk.getPositionIndex(x, y, z);

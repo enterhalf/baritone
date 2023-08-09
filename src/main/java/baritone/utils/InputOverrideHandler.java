@@ -26,7 +26,6 @@ import baritone.api.utils.input.Input;
 import baritone.behavior.Behavior;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.KeyboardInput;
-
 import java.util.HashMap;
 import java.util.Map;
 

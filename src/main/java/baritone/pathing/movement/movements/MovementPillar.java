@@ -32,7 +32,14 @@ import baritone.pathing.movement.MovementState;
 import baritone.utils.BlockStateInterface;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CarpetBlock;
+import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.Vec3;
@@ -100,6 +107,10 @@ public class MovementPillar extends Movement {
             // if we're standing on water and assumeWalkOnWater is false, we must have ascended to here, or sneak backplaced, so it is possible to pillar again
             return COST_INF;
         }
+        if ((from == Blocks.LILY_PAD || from instanceof CarpetBlock) && !fromDown.getFluidState().isEmpty()) {
+            // to ascend here we'd have to break the block we are standing on
+            return COST_INF;
+        }
         double hardness = MovementHelper.getMiningDurationTicks(context, x, y + 2, z, toBreak, true);
         if (hardness >= COST_INF) {
             return COST_INF;
@@ -119,7 +130,7 @@ public class MovementPillar extends Movement {
                     }
                 }
                 // this is commented because it may have had a purpose, but it's very unclear what it was. it's from the minebot era.
-                //if (!MovementHelper.canWalkOn(chkPos, check) || MovementHelper.canWalkThrough(chkPos, check)) {//if the block above where we want to break is not a full block, don't do it
+                //if (!MovementHelper.canWalkOn(context, chkPos, check) || MovementHelper.canWalkThrough(context, chkPos, check)) {//if the block above where we want to break is not a full block, don't do it
                 // TODO why does canWalkThrough mean this action is COST_INF?
                 // FallingBlock makes sense, and !canWalkOn deals with weird cases like if it were lava
                 // but I don't understand why canWalkThrough makes it impossible
@@ -245,7 +256,7 @@ public class MovementPillar extends Movement {
                 BlockState frState = BlockStateInterface.get(ctx, src);
                 Block fr = frState.getBlock();
                 // TODO: Evaluate usage of getMaterial().isReplaceable()
-                if (!(fr instanceof AirBlock || frState.getMaterial().isReplaceable())) {
+                if (!(fr instanceof AirBlock || frState.canBeReplaced())) {
                     RotationUtils.reachable(ctx.player(), src, ctx.playerController().getBlockReachDistance())
                             .map(rot -> new MovementState.MovementTarget(rot, true))
                             .ifPresent(state::setTarget);

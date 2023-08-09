@@ -18,6 +18,7 @@
 package baritone.utils.schematic.format.defaults;
 
 import baritone.utils.schematic.StaticSchematic;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;

@@ -30,6 +30,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import java.awt.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import net.minecraft.client.renderer.blockentity.BeaconRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -42,11 +46,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Matrix4f;
 
-import java.awt.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -58,8 +57,7 @@ public final class PathRenderer implements IRenderer, Helper {
     private static final ResourceLocation TEXTURE_BEACON_BEAM = new ResourceLocation("textures/entity/beacon_beam.png");
 
 
-    private PathRenderer() {
-    }
+    private PathRenderer() {}
 
     public static double posX() {
         return renderManager.renderPosX();
@@ -90,7 +88,7 @@ public final class PathRenderer implements IRenderer, Helper {
 
         Entity renderView = Helper.mc.getCameraEntity();
 
-        if (renderView.level != BaritoneAPI.getProvider().getPrimaryBaritone().getPlayerContext().world()) {
+        if (renderView.level() != BaritoneAPI.getProvider().getPrimaryBaritone().getPlayerContext().world()) {
             System.out.println("I have no idea what's going on");
             System.out.println("The primary baritone is in a different world than the render view entity");
             System.out.println("Not rendering the path");
@@ -211,7 +209,7 @@ public final class PathRenderer implements IRenderer, Helper {
 
         positions.forEach(pos -> {
             BlockState state = bsi.get0(pos);
-            VoxelShape shape = state.getShape(player.level, pos);
+            VoxelShape shape = state.getShape(player.level(), pos);
             AABB toDraw = shape.isEmpty() ? Shapes.block().bounds() : shape.bounds();
             toDraw = toDraw.move(pos);
             IRenderer.drawAABB(stack, toDraw, .002D);
@@ -274,7 +272,7 @@ public final class PathRenderer implements IRenderer, Helper {
                         TEXTURE_BEACON_BEAM,
                         settings.renderGoalAnimated.value ? partialTicks : 0,
                         1.0F,
-                        settings.renderGoalAnimated.value ? player.level.getGameTime() : 0,
+                        settings.renderGoalAnimated.value ? player.level().getGameTime() : 0,
                         0,
                         256,
                         color.getColorComponents(null),

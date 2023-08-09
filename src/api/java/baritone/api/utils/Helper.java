@@ -18,11 +18,13 @@
 package baritone.api.utils;
 
 import baritone.api.BaritoneAPI;
+import baritone.api.utils.gui.BaritoneToast;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.stream.Stream;
@@ -39,8 +41,7 @@ public interface Helper {
     /**
      * Instance of {@link Helper}. Used for static-context reference.
      */
-    Helper HELPER = new Helper() {
-    };
+    Helper HELPER = new Helper() {};
 
     /**
      * Instance of the game

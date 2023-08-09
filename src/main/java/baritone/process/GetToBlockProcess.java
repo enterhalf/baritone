@@ -154,14 +154,18 @@ public final class GetToBlockProcess extends BaritoneProcessHelper implements IG
         return !newBlacklist.isEmpty();
     }
 
-    private Goal createGoal(BlockPos pos) {
-        if (walkIntoInsteadOfAdjacent(gettingTo.getBlock())) {
-            return new GoalTwoBlocks(pos);
+    // this is to signal to MineProcess that we don't care about the allowBreak setting
+    // it is NOT to be used to actually calculate a path
+    public class GetToBlockCalculationContext extends CalculationContext {
+
+        public GetToBlockCalculationContext(boolean forUseOnAnotherThread) {
+            super(GetToBlockProcess.super.baritone, forUseOnAnotherThread);
         }
-        if (blockOnTopMustBeRemoved(gettingTo.getBlock()) && MovementHelper.isBlockNormalCube(baritone.bsi.get0(pos.above()))) { // TODO this should be the check for chest openability
-            return new GoalBlock(pos.above());
+
+        @Override
+        public double breakCostMultiplierAt(int x, int y, int z, BlockState current) {
+            return 1;
         }
-        return new GoalGetToBlock(pos);
     }
 
     // safer than direct double comparison from distanceSq
@@ -195,18 +199,14 @@ public final class GetToBlockProcess extends BaritoneProcessHelper implements IG
         knownLocations = positions;
     }
 
-    // this is to signal to MineProcess that we don't care about the allowBreak setting
-    // it is NOT to be used to actually calculate a path
-    public class GetToBlockCalculationContext extends CalculationContext {
-
-        public GetToBlockCalculationContext(boolean forUseOnAnotherThread) {
-            super(GetToBlockProcess.super.baritone, forUseOnAnotherThread);
+    private Goal createGoal(BlockPos pos) {
+        if (walkIntoInsteadOfAdjacent(gettingTo.getBlock())) {
+            return new GoalTwoBlocks(pos);
         }
-
-        @Override
-        public double breakCostMultiplierAt(int x, int y, int z, BlockState current) {
-            return 1;
+        if (blockOnTopMustBeRemoved(gettingTo.getBlock()) && MovementHelper.isBlockNormalCube(baritone.bsi.get0(pos.above()))) { // TODO this should be the check for chest openability
+            return new GoalBlock(pos.above());
         }
+        return new GoalGetToBlock(pos);
     }
 
     private boolean rightClick() {

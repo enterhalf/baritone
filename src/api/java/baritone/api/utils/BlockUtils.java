@@ -17,12 +17,12 @@
 
 package baritone.api.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class BlockUtils {
 
@@ -64,6 +64,5 @@ public class BlockUtils {
         return block;
     }
 
-    private BlockUtils() {
-    }
+    private BlockUtils() {}
 }

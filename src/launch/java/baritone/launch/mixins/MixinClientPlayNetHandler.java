@@ -27,6 +27,7 @@ import baritone.cache.CachedChunk;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.world.level.ChunkPos;
 import org.spongepowered.asm.mixin.Final;
@@ -67,14 +68,12 @@ public class MixinClientPlayNetHandler {
         }
     }*/
 
-    @Shadow
-    @Final
-    private Minecraft minecraft;
+    @Shadow @Final private Minecraft minecraft;
 
     @Inject(
-            method = "sendChat(Ljava/lang/String;)V",
-            at = @At("HEAD"),
-            cancellable = true
+        method = "sendChat(Ljava/lang/String;)V",
+        at = @At("HEAD"),
+        cancellable = true
     )
     private void sendChatMessage(String string, CallbackInfo ci) {
         ChatEvent event = new ChatEvent(string);

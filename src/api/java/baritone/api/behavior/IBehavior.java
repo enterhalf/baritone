@@ -27,5 +27,4 @@ import baritone.api.event.listener.IGameEventListener;
  * @see IGameEventListener
  * @since 9/23/2018
  */
-public interface IBehavior extends AbstractGameEventListener {
-}
+public interface IBehavior extends AbstractGameEventListener {}

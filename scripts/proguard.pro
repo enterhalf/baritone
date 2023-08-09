@@ -14,7 +14,7 @@
 # instead of renaming to a, b, c, rename to baritone.a, baritone.b, baritone.c so as to not conflict with minecraft's obfd classes
 -flattenpackagehierarchy
 -repackageclasses 'baritone'
--ignorewarnings
+
 # lwjgl is weird
 -dontwarn org.lwjgl.**
 # also lwjgl lol

@@ -42,18 +42,19 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
  */
 public class BlockStateInterface {
 
-    private static final BlockState AIR = Blocks.AIR.defaultBlockState();
-    protected final Level world;
     private final ClientChunkCache provider;
+    private final WorldData worldData;
+    protected final Level world;
     public final BlockPos.MutableBlockPos isPassableBlockPos;
     public final BlockGetter access;
     public final BetterWorldBorder worldBorder;
 
     private LevelChunk prev = null;
-    private final WorldData worldData;
+    private CachedRegion prevCached = null;
 
     private final boolean useTheRealWorld;
-    private CachedRegion prevCached = null;
+
+    private static final BlockState AIR = Blocks.AIR.defaultBlockState();
 
     public BlockStateInterface(IPlayerContext ctx) {
         this(ctx, false);
@@ -80,13 +81,8 @@ public class BlockStateInterface {
         this.access = new BlockStateInterfaceAccessWrapper(this);
     }
 
-    // get the block at x,y,z from this chunk WITHOUT creating a single blockpos object
-    public static BlockState getFromChunk(LevelChunk chunk, int x, int y, int z) {
-        LevelChunkSection section = chunk.getSections()[y >> 4];
-        if (section.hasOnlyAir()) {
-            return AIR;
-        }
-        return section.getBlockState(x & 15, y & 15, z & 15);
+    public boolean worldContainsLoadedChunk(int blockX, int blockZ) {
+        return provider.hasChunk(blockX >> 4, blockZ >> 4);
     }
 
     public static Block getBlock(IPlayerContext ctx, BlockPos pos) { // won't be called from the pathing thread because the pathing thread doesn't make a single blockpos pog
@@ -173,7 +169,12 @@ public class BlockStateInterface {
         return prevRegion.isCached(x & 511, z & 511);
     }
 
-    public boolean worldContainsLoadedChunk(int blockX, int blockZ) {
-        return provider.hasChunk(blockX >> 4, blockZ >> 4);
+    // get the block at x,y,z from this chunk WITHOUT creating a single blockpos object
+    public static BlockState getFromChunk(LevelChunk chunk, int x, int y, int z) {
+        LevelChunkSection section = chunk.getSections()[y >> 4];
+        if (section.hasOnlyAir()) {
+            return AIR;
+        }
+        return section.getBlockState(x & 15, y & 15, z & 15);
     }
 }

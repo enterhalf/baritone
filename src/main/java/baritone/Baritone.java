@@ -60,8 +60,7 @@ public class Baritone implements IBaritone {
         if (!Files.exists(dir.toPath())) {
             try {
                 Files.createDirectories(dir.toPath());
-            } catch (IOException ignored) {
-            }
+            } catch (IOException ignored) {}
         }
     }
 
@@ -215,8 +214,7 @@ public class Baritone implements IBaritone {
             try {
                 Thread.sleep(100);
                 Helper.mc.execute(() -> Helper.mc.setScreen(new GuiClick()));
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
         }).start();
     }
 

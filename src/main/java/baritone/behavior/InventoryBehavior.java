@@ -26,7 +26,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
@@ -34,7 +38,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-
 import java.util.ArrayList;
 import java.util.OptionalInt;
 import java.util.Random;
@@ -151,8 +154,7 @@ public final class InventoryBehavior extends Behavior {
         if (AltoClefSettings.getInstance().isInteractionPaused()) return false;
         if (AltoClefSettings.getInstance().shouldAvoidPlacingAt(x, y, z)) return false;
         BlockState maybe = baritone.getBuilderProcess().placeAt(x, y, z, baritone.bsi.get0(x, y, z));
-        if (maybe != null && throwaway(select, stack -> stack.getItem() instanceof BlockItem && maybe.equals(((BlockItem) stack.getItem()).getBlock().getStateForPlacement(new BlockPlaceContext(new UseOnContext(ctx.world(), ctx.player(), InteractionHand.MAIN_HAND, stack, new BlockHitResult(new Vec3(ctx.player().position().x, ctx.player().position().y, ctx.player().position().z), Direction.UP, ctx.playerFeet(), false)) {
-        }))))) {
+        if (maybe != null && throwaway(select, stack -> stack.getItem() instanceof BlockItem && maybe.equals(((BlockItem) stack.getItem()).getBlock().getStateForPlacement(new BlockPlaceContext(new UseOnContext(ctx.world(), ctx.player(), InteractionHand.MAIN_HAND, stack, new BlockHitResult(new Vec3(ctx.player().position().x, ctx.player().position().y, ctx.player().position().z), Direction.UP, ctx.playerFeet(), false)) {}))))) {
             return true; // gotem
         }
         if (maybe != null && throwaway(select, stack -> stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock().equals(maybe.getBlock()))) {
@@ -172,8 +174,7 @@ public final class InventoryBehavior extends Behavior {
     }
 
     public boolean throwaway(boolean select, Predicate<? super ItemStack> desired, boolean allowInventory) {
-        if (AltoClefSettings.getInstance().isInteractionPaused())
-            return false;
+        if (AltoClefSettings.getInstance().isInteractionPaused()) return false;
         LocalPlayer p = ctx.player();
         NonNullList<ItemStack> inv = p.getInventory().items;
         for (int i = 0; i < 9; i++) {

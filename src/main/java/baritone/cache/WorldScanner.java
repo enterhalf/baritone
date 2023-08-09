@@ -22,6 +22,8 @@ import baritone.api.cache.IWorldScanner;
 import baritone.api.utils.BetterBlockPos;
 import baritone.api.utils.BlockOptionalMetaLookup;
 import baritone.api.utils.IPlayerContext;
+import java.util.*;
+import java.util.stream.IntStream;
 import net.minecraft.client.multiplayer.ClientChunkCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
@@ -30,9 +32,6 @@ import net.minecraft.world.level.chunk.ChunkSource;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainer;
-
-import java.util.*;
-import java.util.stream.IntStream;
 
 public enum WorldScanner implements IWorldScanner {
 

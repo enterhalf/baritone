@@ -36,13 +36,12 @@ import baritone.pathing.path.PathExecutor;
 import baritone.utils.PathRenderer;
 import baritone.utils.PathingCommandContext;
 import baritone.utils.pathing.Favoring;
-import net.minecraft.core.BlockPos;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
+import net.minecraft.core.BlockPos;
 
 public final class PathingBehavior extends Behavior implements IPathingBehavior, Helper {
 
@@ -99,6 +98,7 @@ public final class PathingBehavior extends Behavior implements IPathingBehavior,
             baritone.getPathingControlManager().cancelEverything();
             return;
         }
+
         expectedSegmentStart = pathStart();
         baritone.getPathingControlManager().preTick();
         tickPath();
@@ -419,7 +419,7 @@ public final class PathingBehavior extends Behavior implements IPathingBehavior,
     public BetterBlockPos pathStart() { // TODO move to a helper or util class
         BetterBlockPos feet = ctx.playerFeet();
         if (!MovementHelper.canWalkOn(ctx, feet.below())) {
-            if (ctx.player().isOnGround()) {
+            if (ctx.player().onGround()) {
                 double playerX = ctx.player().position().x;
                 double playerZ = ctx.player().position().z;
                 ArrayList<BetterBlockPos> closest = new ArrayList<>();
@@ -437,7 +437,9 @@ public final class PathingBehavior extends Behavior implements IPathingBehavior,
                         // can't possibly be sneaking off of this one, we're too far away
                         continue;
                     }
-                    if (MovementHelper.canWalkOn(ctx, possibleSupport.below()) && MovementHelper.canWalkThrough(ctx, possibleSupport) && MovementHelper.canWalkThrough(ctx, possibleSupport.above())) {
+                    if (MovementHelper.canWalkOn(ctx, possibleSupport.below())
+                            && MovementHelper.canWalkThrough(ctx, possibleSupport)
+                            && MovementHelper.canWalkThrough(ctx, possibleSupport.above())) {
                         // this is plausible
                         //logDebug("Faking path start assuming player is standing off the edge of a block");
                         return possibleSupport;
